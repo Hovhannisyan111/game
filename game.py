@@ -14,15 +14,19 @@ pygame.font.init()
 width = 800
 height = 600
 
+left = False
+right = False
+
 window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Gmae")
 
-backround = pygame.transform.scale(pygame.image.load("back2.jpg"), (width, height))
-dino_right = pygame.image.load("dinor.png")
-dino_left = pygame.image.load("dinor.png")
+backround = pygame.transform.scale(pygame.image.load("back1.jpg"), (width, height))
 
-dino_h = 30
-dino_w = 20
+dino_right = pygame.image.load("dinor1.png")
+dino_left = pygame.image.load("dinol1.png")
+
+dino_h = dino_right.get_height()
+dino_w = dino_right.get_width()
 
 star_w = 10
 star_h = 20
@@ -30,12 +34,16 @@ star_v = 3
 
 font = pygame.font.SysFont("roman", 30)
 
-def back(player, finish_time, stars):
+def back(player, direction, finish_time, stars):
     window.blit(backround, (0, 0))
 
     time_text = font.render(f"Time: {round(finish_time)}", 1, "white")
     window.blit(time_text, (10, 10))
-    pygame.draw.rect(window, "orange",player)
+    
+    if direction == "right":
+        window.blit(dino_right, (player.x, player.y))
+    else:
+        window.blit(dino_left, (player.x, player.y))
     
     for star in stars:
         pygame.draw.rect(window, "white", star)
@@ -43,6 +51,8 @@ def back(player, finish_time, stars):
     pygame.display.update()
 
 def main():
+    global left, right
+
     run = True
     
     player = pygame.Rect(200, height - dino_h, dino_w, dino_h)
@@ -59,7 +69,7 @@ def main():
 
 
     while run:
-        star_count += clock.tick(100)
+        star_count += clock.tick(200)
         finish_time = time.time() - start_time
 
         if star_count > star1:
@@ -80,8 +90,13 @@ def main():
         key = pygame.key.get_pressed()
         if key[pygame.K_RIGHT] and player.right < width:
             player.move_ip(1,0)
+            right = True
+            left = False
+
         elif key[pygame.K_LEFT] and player.left > 0:
             player.move_ip(-1,0)
+            left = True
+            right = False
 
         for star in stars[:]:
             star.y += star_v
@@ -98,8 +113,10 @@ def main():
             pygame.display.update()
             pygame.time.delay(4000)
             break
+        
+        direction = "right" if right else "left"
 
-        back(player, finish_time, stars)
+        back(player, direction, finish_time, stars)
     pygame.quit()
 
 
