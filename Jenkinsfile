@@ -1,10 +1,9 @@
 pipeline {
   agent any
   stages {
-    stage('') {
+    stage('Checkout') {
       steps {
-        sh '''ls
-'''
+        git(url: 'https://github.com/Hovhannisyan111/game', branch: 'main')
       }
     }
 
